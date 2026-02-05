@@ -1,0 +1,1 @@
+Projetinho simples utilizando da biblioteca Java Mail para um sistema de envio automatizado de e-mails.
