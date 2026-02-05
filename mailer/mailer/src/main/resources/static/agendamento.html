@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<head>
+    <title> Agendamento de visitas </title>
+</head>
+
+<body>
+    <div class="campo">
+        <label> Seu e-mail </label>
+        <input type="email" id="emailVisitante" placeholder="seu@email.com" />
+    </div>
+
+    <div class="campo">
+        <label> Dia da semana </label>
+        <div class="campoDia">
+            <select id="selDia"> 
+                <option value="" disabled selected> Selecione um dia! </option>
+                <option value="segunda">Segunda-feira</option>
+                <option value="terca">Terça-feira</option>
+                <option value="quarta">Quarta-feira</option>
+                <option value="quinta">Quinta-feira</option>
+                <option value="sexta">Sexta-feira</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="campo">
+        <label> Horários </label>
+        <div class="campoHorario">
+            <select id="selHorario">
+                <option value="" disabled selected> Selecione um horário! </option>
+                <option value="13h - 14h">13h - 14h</option>
+                <option value="15h - 16h">15h - 16h</option>
+                <option value="17h - 18h">17h - 18h</option>
+            </select>
+        </div>
+    </div>
+
+    <button class="enviar" id="btEnviar" disabled> Enviar e-mail! </button>
+
+</body>
+
+<script>
+    // Constantes importantes pra uso correto.
+    const selDia = document.getElementById('selDia')
+    const selHorario = document.getElementById('selHorario')
+    const emailVisitante = document.getElementById('emailVisitante')
+    const btEnviar = document.getElementById('btEnviar')
+
+    // Função para validar se todos os campos estão preenchidos
+    function validarFormulario() {
+        const emailValido = emailVisitante.value.trim() !== '';
+        const diaValido = selDia.value !== '';
+        const horarioValido = selHorario.value !== '';
+        
+        return emailValido && diaValido && horarioValido;
+    }
+
+    // Função para atualizar o estado do botão
+    function atualizarBotao() {
+        btEnviar.disabled = !validarFormulario();
+    }
+
+    // Adicionar listeners para validação em tempo real
+    emailVisitante.addEventListener('input', atualizarBotao)
+    selDia.addEventListener('change', atualizarBotao)
+    selHorario.addEventListener('change', atualizarBotao)
+
+    // Montando o corpo da mensagem.
+    // To imaginando ainda com assunto e recipiente do e-mail estáticos.
+    function montaCorpo(){
+        const dia = selDia.value
+        const horario = selHorario.value
+
+        if(dia && horario){
+            return `Uma visita foi requisitada para ${dia} às : ${horario}.`;
+        }
+        return '';
+    }
+
+    // Envio pro spring.
+    btEnviar.addEventListener('click', async () =>{
+        btEnviar.disabled = true;
+        btEnviar.textContent = "Enviando...";
+
+        const mensagem ={
+            donde: emailVisitante.value.trim(),
+            para: "mvfm.filho@gmail.com",
+            corpo: montaCorpo()
+        };
+
+        try {
+            const resposta = await fetch('http://localhost:8080/email/envio', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(mensagem)
+            });
+
+            if(!resposta.ok) throw new Error(`Erro ${resposta.status}`);
+
+            // Reseta tudo
+            selDia.value = '';
+            selHorario.value = '';
+            emailVisitante.value = '';
+        } catch (err){
+            console.error(err)
+        }
+
+        btEnviar.textContent = "Enviar agendamento"
+        atualizarBotao();
+    })
+
+    // Inicializa o estado do botão
+    atualizarBotao();
+</script>

@@ -15,7 +15,7 @@ public class Servico {
         SimpleMailMessage mensagem = new SimpleMailMessage();
         mensagem.setTo(para);
         mensagem.setSubject(assunto);
-        mensagem.setText(corpo + "\n Mensagem enviada por : " + replyTo);
+        mensagem.setText(corpo + "\nMensagem enviada por : " + replyTo);
 
         // Pra simplesmente aperta o botão 'Reply'
         mensagem.setReplyTo(replyTo);
