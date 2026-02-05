@@ -4,6 +4,12 @@
 </head>
 
 <body>
+    <h1> Agendamento de visitas, E-mail automatizado! </h1>
+
+    <div class="whats">
+        <a href="https://wa.me/5551982476060"> Também estou no whats! </a> 
+    </div>
+
     <div class="campo">
         <label> Seu e-mail </label>
         <input type="email" id="emailVisitante" placeholder="seu@email.com" />
@@ -35,6 +41,16 @@
         </div>
     </div>
 
+    <h3> Explique o motivo de sua visita : </h3>
+    <div class="corpoMensagem">
+        <textarea id="corpoMensagem" placeholder="Escreva um pouco sobre a sua visita..." rows="5" cols="50"></textarea>
+    </div>
+
+    <div class="quantia">
+        <label>Quantidade de visitantes: </label>
+        <input type="number" id="quantidadeVisitantes" min="1" max="50" />
+    </div>
+
     <button class="enviar" id="btEnviar" disabled> Enviar e-mail! </button>
 
 </body>
@@ -44,6 +60,8 @@
     const selDia = document.getElementById('selDia')
     const selHorario = document.getElementById('selHorario')
     const emailVisitante = document.getElementById('emailVisitante')
+    const corpoMensagem = document.getElementById('corpoMensagem')
+    const quantidadeVisitantes = document.getElementById('quantidadeVisitantes')
     const btEnviar = document.getElementById('btEnviar')
 
     // Função para validar se todos os campos estão preenchidos
@@ -64,15 +82,19 @@
     emailVisitante.addEventListener('input', atualizarBotao)
     selDia.addEventListener('change', atualizarBotao)
     selHorario.addEventListener('change', atualizarBotao)
+    corpoMensagem.addEventListener('input', atualizarBotao)
+    quantidadeVisitantes.addEventListener('input', atualizarBotao)
 
     // Montando o corpo da mensagem.
     // To imaginando ainda com assunto e recipiente do e-mail estáticos.
     function montaCorpo(){
         const dia = selDia.value
         const horario = selHorario.value
+        const motivo = corpoMensagem.value.trim()
+        const quantidade = quantidadeVisitantes.value
 
-        if(dia && horario){
-            return `Uma visita foi requisitada para ${dia} às : ${horario}.`;
+        if(dia && horario ){
+            return `Uma visita foi requisitada para ${dia} às : ${horario} por ${emailVisitante.value.trim()}.\nMotivo da visita:\n ${motivo}\nQuantidade de visitantes: ${quantidade}`;
         }
         return '';
     }
